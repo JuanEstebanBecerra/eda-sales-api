@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+  intranet:
+    ports:
+      - "9000:9000"
+  nginx:
+    ports:
+      - "8080:80"
