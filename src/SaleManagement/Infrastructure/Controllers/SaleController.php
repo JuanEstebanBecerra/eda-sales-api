@@ -4,12 +4,15 @@ namespace SaleManagement\Infrastructure\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Kernel\Infrastructure\Controllers\BaseController;
 use SaleManagement\Application\Interfaces\Services\SaleProductServiceInterface;
 use SaleManagement\Application\Interfaces\Services\SaleServiceInterface;
 use SaleManagement\Application\Mappers\SaleNewDtoMapper;
-use SaleManagement\Application\Mappers\ProductUpdateDtoMapper;
 use SaleManagement\Application\Mappers\SaleProductNewDtoMapper;
+use Junges\Kafka\Message\Message;
+use Junges\Kafka\Facades\Kafka;
+use SaleManagement\Infrastructure\Interfaces\EventHandlers\StockVerificationEventHandlerInterface;
 
 class SaleController extends BaseController
 {
@@ -18,6 +21,9 @@ class SaleController extends BaseController
      */
     private SaleServiceInterface $saleService;
 
+    /**
+     * @var SaleProductServiceInterface
+     */
     private SaleProductServiceInterface $saleProductService;
 
     /**
@@ -25,7 +31,7 @@ class SaleController extends BaseController
      * @param SaleProductServiceInterface $saleProductService
      */
     public function __construct(
-        SaleServiceInterface $saleService,
+        SaleServiceInterface        $saleService,
         SaleProductServiceInterface $saleProductService)
     {
         $this->saleService = $saleService;
@@ -60,6 +66,15 @@ class SaleController extends BaseController
                 $this->saleProductService
                     ->store($productDto);
             }
+
+            (App::make(StockVerificationEventHandlerInterface::class))
+                ->sendMessage([
+                    'action' => 'stock_verification',
+                    'data' => [
+                        'saleId' => $saleDto->id,
+                        'products' => $request->products
+                    ]
+                ]);
 
             return [
                 'message' => 'Pedido realizada exitosamente'

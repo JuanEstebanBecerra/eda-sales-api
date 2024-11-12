@@ -8,6 +8,8 @@ use SaleManagement\Application\Interfaces\Services\SaleProductServiceInterface;
 use SaleManagement\Application\Interfaces\Services\SaleServiceInterface;
 use SaleManagement\Application\Services\SaleProductService;
 use SaleManagement\Application\Services\SaleService;
+use SaleManagement\Infrastructure\EventHandlers\StockVerificationEventHandler;
+use SaleManagement\Infrastructure\Interfaces\EventHandlers\StockVerificationEventHandlerInterface;
 use SaleManagement\Infrastructure\Interfaces\Repositories\SaleProductRepositoryInterface;
 use SaleManagement\Infrastructure\Interfaces\Repositories\SaleRepositoryInterface;
 use SaleManagement\Infrastructure\Repositories\SaleProductRepository;
@@ -25,6 +27,7 @@ class SaleManagementServiceProvider extends ServiceProvider
         $this->app->bind(SaleRepositoryInterface::class, SaleRepository::class);
         $this->app->bind(SaleProductServiceInterface::class, SaleProductService::class);
         $this->app->bind(SaleProductRepositoryInterface::class, SaleProductRepository::class);
+        $this->app->bind(StockVerificationEventHandlerInterface::class, StockVerificationEventHandler::class);
     }
 
     /**

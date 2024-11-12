@@ -105,6 +105,12 @@ return [
             'processors' => [PsrLogMessageProcessor::class],
         ],
 
+        'stdout' => [
+            'driver' => 'single',
+            'path' => 'php://stdout', // Redirige los logs a stdout
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
+
         'syslog' => [
             'driver' => 'syslog',
             'level' => env('LOG_LEVEL', 'debug'),
